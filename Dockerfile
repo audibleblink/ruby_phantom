@@ -2,7 +2,7 @@ FROM alpine
 MAINTAINER github/audibleblink
 
 # Install deps for bundle and npm
-RUN apk add --no-cache ruby-dev ruby-irb ruby-json make g++ zlib-dev curl nodejs
+RUN apk add --no-cache ruby-dev ruby-irb ruby-json make g++ zlib-dev curl nodejs nodejs-npm
 
 # Alpine/PhantomJS Bug: https://github.com/ariya/phantomjs/issues/14186#issuecomment-381924432
 RUN  curl -Ls "https://github.com/dustinblackman/phantomized/releases/download/2.1.1/dockerized-phantomjs.tar.gz" | tar xz -C / \
@@ -11,7 +11,7 @@ RUN  curl -Ls "https://github.com/dustinblackman/phantomized/releases/download/2
 
 # Installs the webdriver and phantomjs wrapper
 RUN gem install --no-document poltergeist
-RUN apk del curl make g++ zlib-dev \
-  && rm -rf /usr/share/man /var/tmp/* /var/cache/apk/* /root/.npm /root/.node-gyp /tmp/* /usr/local/lib/node_modules/npm \
+RUN apk del curl make g++ zlib-dev nodejs-npm \
+  && rm -rf /usr/share/man /var/tmp/* /var/cache/apk/* /root/.npm /root/.node-gyp /tmp/* /usr/local/lib/node_modules/npm
 
 CMD ["irb"]
