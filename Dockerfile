@@ -1,31 +1,20 @@
-FROM ruby:slim
+FROM node:9.11-alpine
 MAINTAINER github/audibleblink
 
 # Install deps for bundle and npm
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update \
-  && apt-get upgrade -y \
-  && apt-get install -y \
-  curl \
-  git \
-  make \
-  build-essential \
-  libfontconfig \
-  && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache ruby-dev ruby-bundler ruby-irb ruby-json make g++ zlib-dev curl
 
-
-WORKDIR /tmp
-# Install node and npm
-RUN bash -c 'curl -L https://git.io/n-install | bash -s -- -y'
-
-# Ensure phantomjs is in PATH as well as node shims
-ENV PATH $PATH:/root/n/bin
-RUN npm config set user 0 \
-  &&  npm config set unsafe-perm true \
-  &&  npm install -g phantomjs-prebuilt
+# Alpine/PhantomJS Bug: https://github.com/ariya/phantomjs/issues/14186#issuecomment-381924432
+RUN  curl -Ls "https://github.com/dustinblackman/phantomized/releases/download/2.1.1/dockerized-phantomjs.tar.gz" | tar xz -C / \
+  && npm config set user 0 \
+  && npm install -g phantomjs-prebuilt
 
 # Installs the webdriver and phantomjs wrapper
+WORKDIR /tmp
 ADD Gemfile /tmp/
-RUN bundle install && rm -rf /tmp/*
+RUN bundle install
+
+RUN apk del curl make g++ zlib-dev \
+  && rm -rf /usr/share/man /var/tmp/* /var/cache/apk/* /root/.npm /root/.node-gyp /tmp/* /usr/local/lib/node_modules/npm \
 
 CMD ["pry"]
