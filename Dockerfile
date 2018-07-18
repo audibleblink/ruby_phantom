@@ -14,4 +14,4 @@ RUN gem install --no-document poltergeist
 RUN apk del curl make g++ zlib-dev \
   && rm -rf /usr/share/man /var/tmp/* /var/cache/apk/* /root/.npm /root/.node-gyp /tmp/* /usr/local/lib/node_modules/npm \
 
-CMD ["pry"]
+CMD ["irb"]
